@@ -14,7 +14,9 @@ fn main() {
     let answers = get_answers("C:/Users/grand/dev/learning_rust/wordle/words/answers.txt");
     let rand_number = rand::thread_rng().gen_range(1..=answers.len());
     let answer = &answers[rand_number];
-    let answer = to_vec_char(answer);
+    let answer_vec = to_vec_char(answer);
+    let indices = vec![0, 1, 2, 3, 4];
+    let answer = to_hashmap(answer_vec, indices);
 
     println!("{:?}", answer);
 
@@ -41,23 +43,23 @@ fn main() {
 
         println!("{:?}", guess);
 
-        if guess == answer {
+        if guess == answer_vec {
             break
         }
 
         for i in 0..5 {
-            let current_letter = guess.get(i).unwrap();
+            let current_letter = guess.get(i).expect("Invalid input");
             
-            if current_letter == answer.get(i).unwrap() {
+            if current_letter == answer.get(&i).unwrap() {
                 checker.insert(i, 0);
                 //println!("{current_letter}, {answer_letter}, {i}, {j}");
             }
-            else if !answer.contains(current_letter) {
+            else if !answer_vec.contains(current_letter) {
                 checker.insert(i, 2)
             }
             else {
                 for j in 0..5 {
-                    let answer_letter = answer.get(j).unwrap();
+                    let answer_letter = answer_vec.get(j).unwrap();
                     
                     if current_letter == answer_letter {
                         checker.insert(i, 1);
@@ -72,12 +74,26 @@ fn main() {
     }
 }
 
-fn to_vec_char(t: &String) -> HashMap<char, usize> {
-    let mut chars = HashMap::new();
+fn to_hashmap(answer: Vec<char>, indices: Vec<usize>) -> HashMap<usize, char> {
+    let mut map = HashMap::new();
 
     for i in 0..5 {
-        chars.insert(t.as_bytes()[i] as char, i.eq(&0) as usize);
-        //chars.push(t.as_bytes()[i] as char);
+        map.insert(indices[i], answer[i] as char);
+    }
+
+    map
+
+    //let new_answer: HashMap<_, _> = answer.iter().zip(indices.iter()).collect();
+    
+    //new_answer
+}
+
+fn to_vec_char(t: &String) -> Vec<char> {
+    let mut chars = Vec::new();
+
+    for i in 0..5 {
+        //chars.insert(t.as_bytes()[i] as char, i.eq(&0) as usize);
+        chars.push(t.as_bytes()[i] as char);
     }
 
     chars
