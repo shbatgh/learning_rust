@@ -3,6 +3,7 @@ use std::{
     io::{prelude::*, BufReader},
     path::Path,
     io, thread::current, env::current_exe,
+    collections::HashMap,
 };
 use rand::Rng;
 
@@ -10,7 +11,7 @@ use rand::Rng;
 fn main() {
     let mut guesses_left = 6;
 
-    let answers = get_answers("/home/turing/dev/learning_rust/wordle/words/answers.txt");
+    let answers = get_answers("C:/Users/grand/dev/learning_rust/wordle/words/answers.txt");
     let rand_number = rand::thread_rng().gen_range(1..=answers.len());
     let answer = &answers[rand_number];
     let answer = to_vec_char(answer);
@@ -71,11 +72,12 @@ fn main() {
     }
 }
 
-fn to_vec_char(t: &String) -> Vec<char> {
-    let mut chars = Vec::new();
+fn to_vec_char(t: &String) -> HashMap<char, usize> {
+    let mut chars = HashMap::new();
 
     for i in 0..5 {
-        chars.push(t.as_bytes()[i] as char);
+        chars.insert(t.as_bytes()[i] as char, i.eq(&0) as usize);
+        //chars.push(t.as_bytes()[i] as char);
     }
 
     chars
